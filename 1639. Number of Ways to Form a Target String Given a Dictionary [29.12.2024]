@@ -1,0 +1,31 @@
+class Solution:
+    def numWays(self, words, target):
+        MOD = 10**9 + 7
+        m, n = len(words), len(words[0])
+        t_len = len(target)
+        
+        # Create a 2D list to count the frequency of each character at each position
+        freq = [[0] * 26 for _ in range(n)]
+        for word in words:
+            for i, char in enumerate(word):
+                freq[i][ord(char) - ord('a')] += 1
+        
+        # DP array to store the number of ways to form the target
+        dp = [0] * (t_len + 1)
+        dp[0] = 1
+        
+        for j in range(n):
+            for i in range(t_len - 1, -1, -1):
+                dp[i + 1] = (dp[i + 1] + dp[i] * freq[j][ord(target[i]) - ord('a')]) % MOD
+        
+        return dp[t_len]
+
+# Example usage:
+solution = Solution()
+words1 = ["acca", "bbbb", "caca"]
+target1 = "aba"
+print(solution.numWays(words1, target1))  # Output: 6
+
+words2 = ["abba", "baab"]
+target2 = "bab"
+print(solution.numWays(words2, target2))  # Output: 4
