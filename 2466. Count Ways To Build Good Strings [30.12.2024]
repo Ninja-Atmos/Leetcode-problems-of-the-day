@@ -1,0 +1,40 @@
+#include <iostream>
+#include <vector>
+#define MOD 1000000007
+
+using namespace std;
+
+class Solution {
+public:
+    int countGoodStrings(int low, int high, int zero, int one) {
+        vector<int> dp(high + 1, 0);
+        dp[0] = 1; // Base case: there's one way to construct an empty string
+
+        for (int length = 1; length <= high; ++length) {
+            if (length >= zero) {
+                dp[length] = (dp[length] + dp[length - zero]) % MOD;
+            }
+            if (length >= one) {
+                dp[length] = (dp[length] + dp[length - one]) % MOD;
+            }
+        }
+
+        int result = 0;
+        for (int length = low; length <= high; ++length) {
+            result = (result + dp[length]) % MOD;
+        }
+
+        return result;
+    }
+};
+
+int suvam() {
+    int low, high, zero, one;
+    cin >> low >> high >> zero >> one;
+
+    Solution solution;
+    int result = solution.countGoodStrings(low, high, zero, one);
+    cout << result << endl;
+
+    return 0;
+}
