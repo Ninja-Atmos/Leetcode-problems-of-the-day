@@ -1,0 +1,30 @@
+class Solution:
+    def vowelStrings(self, words, queries):
+        def is_vowel(c):
+            return c in 'aeiou'
+        
+        def starts_and_ends_with_vowel(word):
+            return is_vowel(word[0]) and is_vowel(word[-1])
+        
+        # Precompute the number of valid strings up to each index
+        n = len(words)
+        prefix_count = [0] * (n + 1)
+        for i in range(n):
+            prefix_count[i + 1] = prefix_count[i] + (1 if starts_and_ends_with_vowel(words[i]) else 0)
+        
+        # Answer each query
+        result = []
+        for li, ri in queries:
+            result.append(prefix_count[ri + 1] - prefix_count[li])
+        
+        return result
+
+# Example usage
+words = ["aba", "bcb", "ece", "aa", "e"]
+queries = [[0, 2], [1, 4], [1, 1]]
+solution = Solution()
+print(solution.vowelStrings(words, queries))  # Output: [2, 3, 0]
+
+words = ["a", "e", "i"]
+queries = [[0, 2], [0, 1], [2, 2]]
+print(solution.vowelStrings(words, queries))  # Output: [3, 2, 1]
