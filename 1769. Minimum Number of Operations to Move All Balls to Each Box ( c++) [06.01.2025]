@@ -1,0 +1,58 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <cmath>
+
+using namespace std;
+
+class Solution {
+public:
+    vector<int> minOperations(string boxes) {
+        int n = boxes.size();
+        vector<int> answer(n, 0);
+        
+        // Calculate the operations needed to move balls to each box from left to right
+        int count = 0;
+        int operations = 0;
+        for (int i = 0; i < n; i++) {
+            answer[i] += operations;
+            if (boxes[i] == '1') {
+                count++;
+            }
+            operations += count;
+        }
+        
+        count = 0;
+        operations = 0;
+        
+        // Calculate the operations needed to move balls to each box from right to left
+        for (int i = n - 1; i >= 0; i--) {
+            answer[i] += operations;
+            if (boxes[i] == '1') {
+                count++;
+            }
+            operations += count;
+        }
+        
+        return answer;
+    }
+};
+
+int suvam() {
+    Solution sol;
+    string boxes = "110";
+    vector<int> result = sol.minOperations(boxes);
+    for (int i : result) {
+        cout << i << " ";
+    }
+    cout << endl;
+    
+    boxes = "001011";
+    result = sol.minOperations(boxes);
+    for (int i : result) {
+        cout << i << " ";
+    }
+    cout << endl;
+    
+    return 0;
+}
