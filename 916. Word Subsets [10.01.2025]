@@ -1,0 +1,30 @@
+from collections import Counter
+
+class Solution:
+    def wordSubsets(self, words1, words2):
+        def count(word):
+            return Counter(word)
+        
+        bmax = Counter()
+        for b in words2:
+            b_count = count(b)
+            for char in b_count:
+                bmax[char] = max(bmax[char], b_count[char])
+        
+        result = []
+        for a in words1:
+            a_count = count(a)
+            if all(a_count[char] >= bmax[char] for char in bmax):
+                result.append(a)
+        
+        return result
+
+# Example usage:
+solution = Solution()
+words1 = ["amazon", "apple", "facebook", "google", "leetcode"]
+words2 = ["e", "o"]
+print(solution.wordSubsets(words1, words2))  # Output: ["facebook", "google", "leetcode"]
+
+words1 = ["amazon", "apple", "facebook", "google", "leetcode"]
+words2 = ["l", "e"]
+print(solution.wordSubsets(words1, words2))  # Output: ["apple", "google", "leetcode"]
