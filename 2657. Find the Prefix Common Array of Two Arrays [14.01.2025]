@@ -1,0 +1,18 @@
+class Solution:
+    def findThePrefixCommonArray(self, A, B):
+        n = len(A)
+        C = [0] * n
+        set_A = set()
+        set_B = set()
+        for i in range(n):
+            set_A.add(A[i])
+            set_B.add(B[i])
+            C[i] = len(set_A & set_B)  # Count common elements in both sets
+        return C
+A1 = [1, 3, 2, 4]
+B1 = [3, 1, 2, 4]
+solution = Solution()
+print(solution.findThePrefixCommonArray(A1, B1))  # Output: [0, 2, 3, 4]
+A2 = [2, 3, 1]
+B2 = [3, 1, 2]
+print(solution.findThePrefixCommonArray(A2, B2))  # Output: [0, 1, 3]
