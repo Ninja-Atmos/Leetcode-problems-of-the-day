@@ -1,0 +1,43 @@
+from typing import List
+
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.best_idx = -1
+
+class Solution:
+    def stringIndices(self, wordsContainer: List[str], wordsQuery: List[str]) -> List[int]:
+        root = TrieNode()
+
+        def update_best(node: TrieNode, idx: int, word: str):
+            if node.best_idx == -1:
+                node.best_idx = idx
+            else:
+                curr_best_word = wordsContainer[node.best_idx]
+                if len(word) < len(curr_best_word):
+                    node.best_idx = idx
+                elif len(word) == len(curr_best_word) and idx < node.best_idx:
+                    node.best_idx = idx
+
+        for i, word in enumerate(wordsContainer):
+            curr = root
+            update_best(curr, i, word)
+            
+            for char in reversed(word):
+                if char not in curr.children:
+                    curr.children[char] = TrieNode()
+                curr = curr.children[char]
+                update_best(curr, i, word)
+
+        ans = []
+        for query in wordsQuery:
+            curr = root
+            for char in reversed(query):
+                if char in curr.children:
+                    curr = curr.children[char]
+                else:
+                    break
+            
+            ans.append(curr.best_idx)
+
+        return ans
