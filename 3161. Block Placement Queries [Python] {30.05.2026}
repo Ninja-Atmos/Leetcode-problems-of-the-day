@@ -1,0 +1,106 @@
+class SegmentTree:
+    def __init__(self, size):
+        self.n = size
+        self.max_gap = [0] * (2 * size)
+        self.max_obs = [-1] * (2 * size)
+        self.min_obs = [float('inf')] * (2 * size)
+        
+    def add_obstacle(self, pos):
+        idx = pos + self.n
+        self.max_obs[idx] = pos
+        self.min_obs[idx] = pos
+        idx //= 2
+        while idx > 0:
+            self.max_obs[idx] = max(self.max_obs[2 * idx], self.max_obs[2 * idx + 1])
+            self.min_obs[idx] = min(self.min_obs[2 * idx], self.min_obs[2 * idx + 1])
+            idx //= 2
+
+    def update_gap(self, pos, val):
+        idx = pos + self.n
+        self.max_gap[idx] = val
+        idx //= 2
+        while idx > 0:
+            self.max_gap[idx] = max(self.max_gap[2 * idx], self.max_gap[2 * idx + 1])
+            idx //= 2
+
+    def query_max_obs(self, l, r):
+        l += self.n
+        r += self.n
+        res = -1
+        while l < r:
+            if l % 2 == 1:
+                res = max(res, self.max_obs[l])
+                l += 1
+            if r % 2 == 1:
+                r -= 1
+                res = max(res, self.max_obs[r])
+            l //= 2
+            r //= 2
+        return res
+
+    def query_min_obs(self, l, r):
+        l += self.n
+        r += self.n
+        res = float('inf')
+        while l < r:
+            if l % 2 == 1:
+                res = min(res, self.min_obs[l])
+                l += 1
+            if r % 2 == 1:
+                r -= 1
+                res = min(res, self.min_obs[r])
+            l //= 2
+            r //= 2
+        return res
+
+    def query_max_gap(self, l, r):
+        l += self.n
+        r += self.n
+        res = 0
+        while l < r:
+            if l % 2 == 1:
+                res = max(res, self.max_gap[l])
+                l += 1
+            if r % 2 == 1:
+                r -= 1
+                res = max(res, self.max_gap[r])
+            l //= 2
+            r //= 2
+        return res
+
+class Solution:
+    def getResults(self, queries: list[list[int]]) -> list[bool]:
+        max_x = max(q[1] for q in queries)
+        N = max_x + 2 
+        
+        seg_tree = SegmentTree(N)
+        
+        seg_tree.add_obstacle(0)
+        seg_tree.update_gap(0, 0)
+        
+        results = []
+        
+        for q in queries:
+            if q[0] == 1:
+                x = q[1]
+                
+                L = seg_tree.query_max_obs(0, x)
+                R = seg_tree.query_min_obs(x + 1, N)
+                
+                if R != float('inf'):
+                    seg_tree.update_gap(R, R - x)
+                    
+                seg_tree.update_gap(x, x - L)
+                seg_tree.add_obstacle(x)
+                
+            else:
+                x, sz = q[1], q[2]
+                
+                L = seg_tree.query_max_obs(0, x + 1)
+                max_fully_bounded_gap = seg_tree.query_max_gap(0, L + 1)
+                partial_gap = x - L
+                
+                largest_possible_block = max(max_fully_bounded_gap, partial_gap)
+                results.append(largest_possible_block >= sz)
+                
+        return results
